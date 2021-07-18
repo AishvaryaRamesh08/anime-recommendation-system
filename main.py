@@ -6,7 +6,7 @@ import dash_html_components as html
 import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SOLAR])
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SOLAR], title='AnimeWreck')
 server = app.server
 
 df = pd.read_csv('animes_cleaned.csv')
@@ -25,12 +25,16 @@ def get_index_from_name(name):
     return df[df["title"] == name].index.tolist()[0]
 
 
-def create_card(imgid, titleid, scoreid):
+def create_card(imgid, titleid, scoreid, moreid):
     card_main = dbc.Card([
         dbc.CardImg(id=imgid, src=df.iloc[0, 10], top=True, bottom=False,
                     title="Image", style={'height': '250px'}),
-        dbc.CardBody([html.H4(df.iloc[0, 1], id=titleid),
-                      html.H6(children='Score:', id=scoreid)])],
+        dbc.CardBody([
+            html.H4(df.iloc[0, 1], id=titleid),
+            html.H6(children='Score:', id=scoreid),
+            dbc.CardLink('More', id=moreid, href="#")
+        ]),
+    ],
         color="dark",
         inverse=True,
         outline=False
@@ -49,14 +53,8 @@ card0 = dbc.Card([dbc.CardBody([html.H4(df.iloc[0, 1], className="card-title", i
                                 html.H6(children='Score:', id='score0'),
                                 html.H6(children='Episodes:', id='epi0'),
                                 html.H5("Synopsis", className="card-subtitle"),
-                                html.P(
-                                    df.iloc[0, 2],
-                                    className="card-text",
-                                    id='syn0',
-                                    style={'fontSize': 12}
-                                ),
-                                ],
-                               ),
+                                html.P(df.iloc[0, 2], className="card-text", id='syn0', style={'fontSize': 12}),
+                                ]),
                   ],
                  color="dark",
                  inverse=True,
@@ -65,6 +63,7 @@ card0 = dbc.Card([dbc.CardBody([html.H4(df.iloc[0, 1], className="card-title", i
 
 button = dbc.Row([dbc.Col(dbc.Button("About", color="light", outline=True, id='about', n_clicks=0), width="auto")],
                  no_gutters=True,
+                 className="ml-auto flex-nowrap mt-3 mt-md-0",
                  align="center",
                  )
 
@@ -110,21 +109,21 @@ app.layout = html.Div([dbc.Navbar(
     dbc.Row(dbc.Col(html.H3('Recommendations')),
             style={'color': 'white'}
             ),
-    dbc.Row([dbc.Col(create_card('img1', 'title1', 'score1'), width=2),
-             dbc.Col(create_card('img2', 'title2', 'score2'), width=2),
-             dbc.Col(create_card('img3', 'title3', 'score3'), width=2),
-             dbc.Col(create_card('img4', 'title4', 'score4'), width=2),
-             dbc.Col(create_card('img5', 'title5', 'score5'), width=2),
-             dbc.Col(create_card('img6', 'title6', 'score6'), width=2)
+    dbc.Row([dbc.Col(create_card('img1', 'title1', 'score1', 'more1'), width=2),
+             dbc.Col(create_card('img2', 'title2', 'score2', 'more2'), width=2),
+             dbc.Col(create_card('img3', 'title3', 'score3', 'more3'), width=2),
+             dbc.Col(create_card('img4', 'title4', 'score4', 'more4'), width=2),
+             dbc.Col(create_card('img5', 'title5', 'score5', 'more5'), width=2),
+             dbc.Col(create_card('img6', 'title6', 'score6', 'more6'), width=2)
              ],
             style={'marginBottom': 10, 'marginTop': 0}
             ),
-    dbc.Row([dbc.Col(create_card('img7', 'title7', 'score7'), width=2),
-             dbc.Col(create_card('img8', 'title8', 'score8'), width=2),
-             dbc.Col(create_card('img9', 'title9', 'score9'), width=2),
-             dbc.Col(create_card('img10', 'title10', 'score10'), width=2),
-             dbc.Col(create_card('img11', 'title11', 'score11'), width=2),
-             dbc.Col(create_card('img12', 'title12', 'score12'), width=2)
+    dbc.Row([dbc.Col(create_card('img7', 'title7', 'score7', 'more7'), width=2),
+             dbc.Col(create_card('img8', 'title8', 'score8', 'more8'), width=2),
+             dbc.Col(create_card('img9', 'title9', 'score9', 'more9'), width=2),
+             dbc.Col(create_card('img10', 'title10', 'score10', 'more10'), width=2),
+             dbc.Col(create_card('img11', 'title11', 'score11', 'more11'), width=2),
+             dbc.Col(create_card('img12', 'title12', 'score12', 'more12'), width=2)
              ])
 ])
 
@@ -299,6 +298,63 @@ def callback12(title):
     return df.loc[i]['img_url'], df.loc[i]['title'], score
 
 
+@app.callback(
+    Output(component_id='titleinput', component_property='value'),
+    [Input(component_id='more1', component_property='n_clicks'),
+     Input(component_id='more2', component_property='n_clicks'),
+     Input(component_id='more3', component_property='n_clicks'),
+     Input(component_id='more4', component_property='n_clicks'),
+     Input(component_id='more5', component_property='n_clicks'),
+     Input(component_id='more6', component_property='n_clicks'),
+     Input(component_id='more7', component_property='n_clicks'),
+     Input(component_id='more8', component_property='n_clicks'),
+     Input(component_id='more9', component_property='n_clicks'),
+     Input(component_id='more10', component_property='n_clicks'),
+     Input(component_id='more11', component_property='n_clicks'),
+     Input(component_id='more12', component_property='n_clicks')],
+    [State(component_id='title1', component_property='children'),
+     State(component_id='title2', component_property='children'),
+     State(component_id='title3', component_property='children'),
+     State(component_id='title4', component_property='children'),
+     State(component_id='title5', component_property='children'),
+     State(component_id='title6', component_property='children'),
+     State(component_id='title7', component_property='children'),
+     State(component_id='title8', component_property='children'),
+     State(component_id='title9', component_property='children'),
+     State(component_id='title10', component_property='children'),
+     State(component_id='title11', component_property='children'),
+     State(component_id='title12', component_property='children')],
+    prevent_initial_call=True
+)
+def more1callback(n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12, title1, title2, title3, title4, title5, title6,
+                  title7, title8, title9, title10, title11, title12):
+    ctx = dash.callback_context
+    n = ctx.triggered[0]['prop_id']
+    if n == 'more1.n_clicks':
+        return title1
+    if n == 'more2.n_clicks':
+        return title2
+    if n == 'more3.n_clicks':
+        return title3
+    if n == 'more4.n_clicks':
+        return title4
+    if n == 'more5.n_clicks':
+        return title5
+    if n == 'more6.n_clicks':
+        return title6
+    if n == 'more7.n_clicks':
+        return title7
+    if n == 'more8.n_clicks':
+        return title8
+    if n == 'more9.n_clicks':
+        return title9
+    if n == 'more10.n_clicks':
+        return title10
+    if n == 'more11.n_clicks':
+        return title11
+    if n == 'more12.n_clicks':
+        return title12
+
+
 if __name__ == "__main__":
     app.run_server(debug=True)
-
